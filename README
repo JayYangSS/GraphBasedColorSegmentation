@@ -1,3 +1,5 @@
+The original readme:
+
 
 Implementation of the segmentation algorithm described in:
 
@@ -23,3 +25,12 @@ output: Output image.
 Typical parameters are sigma = 0.5, k = 500, min = 20.
 Larger values for k result in larger components in the result.
 
+-----
+
+I have changed the source code into the opencv version. You can useed it with the 
+image format that the openCV support.
+
+The source code can be found at: http://cs.brown.edu/~pff/segment/
+
+The project can be used in both Visual Studio and Ubuntu. If you want to use in Ubuntu,
+please step into segment directory and type "make" to compile "segment".
