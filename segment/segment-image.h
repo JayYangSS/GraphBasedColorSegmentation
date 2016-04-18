@@ -54,27 +54,29 @@ static inline float diff(IplImage *r, IplImage *g, IplImage *b,
  *
  * Returns a color image representing the segmentation.
  *
- * im: image to segment.
+ * input: image to segment.
  * sigma: to smooth the image.
  * c: constant for treshold function.
  * min_size: minimum component size (enforced by post-processing stage).
  * num_ccs: number of connected components in the segmentation.
  */
-IplImage *segment_image(IplImage *im, float sigma, float c, int min_size,
-			  int *num_ccs) {
-	int width = im->width;
-	int height = im->height;
+void segment_image(int min_size) {
+	int width = input->width;
+	int height = input->height;
+	std::cout << "k:" << k << std::endl;
+	std::cout << "min_size:" << min_size << std::endl;
+	
+	IplImage *r = cvCreateImage(cvSize(width, height), input->depth,1);
+	IplImage *g = cvCreateImage(cvSize(width, height), input->depth, 1);
+	IplImage *b = cvCreateImage(cvSize(width, height), input->depth, 1);
+	cvSplit(input, b, g, r,NULL);
 
-	IplImage *r = cvCreateImage(cvSize(width, height), im->depth,1);
-	IplImage *g = cvCreateImage(cvSize(width, height), im->depth, 1);
-	IplImage *b = cvCreateImage(cvSize(width, height), im->depth, 1);
-	cvSplit(im, b, g, r,NULL);
+	IplImage *smooth_r = cvCreateImage(cvSize(width, height), input->depth, 1);
+	IplImage *smooth_g = cvCreateImage(cvSize(width, height), input->depth, 1);
+	IplImage *smooth_b = cvCreateImage(cvSize(width, height), input->depth, 1);
 
-	IplImage *smooth_r = cvCreateImage(cvSize(width, height), im->depth, 1);
-	IplImage *smooth_g = cvCreateImage(cvSize(width, height), im->depth, 1);
-	IplImage *smooth_b = cvCreateImage(cvSize(width, height), im->depth, 1);
-
-
+	sigma = sigmaInt*0.01;
+	std::cout << "sigma:" << sigma << std::endl;
 	cvSmooth(r, smooth_r, CV_GAUSSIAN, 5, 5, sigma, sigma);
 	cvSmooth(g, smooth_g, CV_GAUSSIAN, 5, 5, sigma, sigma);
 	cvSmooth(b, smooth_b, CV_GAUSSIAN, 5, 5, sigma, sigma);
@@ -123,7 +125,7 @@ IplImage *segment_image(IplImage *im, float sigma, float c, int min_size,
   cvReleaseImage(&smooth_b);
 
   // segment
-  universe *u = segment_graph(width*height, num, edges, c);
+  universe *u = segment_graph(width*height, num, edges, k);
   
   // post process small components
   for (int i = 0; i < num; i++) {
@@ -133,9 +135,10 @@ IplImage *segment_image(IplImage *im, float sigma, float c, int min_size,
       u->join(a, b);
   }
   delete [] edges;
-  *num_ccs = u->num_sets();
+  num_ccs = u->num_sets();
+  std::cout << "component number:" << num_ccs << std::endl;
 
-  IplImage *output = cvCreateImage(cvSize(width, height),IPL_DEPTH_8U,im->nChannels);
+  output = cvCreateImage(cvSize(width, height),IPL_DEPTH_8U,input->nChannels);
 
   // pick random colors for each component
   rgb *colors = new rgb[width*height];
@@ -156,7 +159,10 @@ IplImage *segment_image(IplImage *im, float sigma, float c, int min_size,
   delete [] colors;  
   delete u;
 
-  return output;
+  cvShowImage("Seg", output);
+  cvWaitKey(5);
+
+  //return output;
 }
 
 #endif

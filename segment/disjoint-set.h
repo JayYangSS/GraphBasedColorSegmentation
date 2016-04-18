@@ -18,6 +18,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 
 #ifndef DISJOINT_SET
 #define DISJOINT_SET
+#include <opencv2\opencv.hpp>
+int sigmaInt = 80;
+float sigma = 0.01*sigmaInt;
+int k = 900;
+int min_size = 100;
+IplImage *output = NULL;
+IplImage *input = NULL;
+int num_ccs = 0;
 
 // disjoint-set forests using union-by-rank and path compression (sort of).
 

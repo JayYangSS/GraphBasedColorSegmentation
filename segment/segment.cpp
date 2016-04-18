@@ -22,9 +22,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
 #include "segment-image.h"
 #include <opencv2\opencv.hpp>
 
-float sigma = 0.8;
-float k = 500;
-int min_size = 100;
 
 int main(int argc, char **argv) {
 
@@ -33,19 +30,22 @@ int main(int argc, char **argv) {
   int width = src->width;
   int height = src->height;	
 
-  IplImage *input = cvCreateImage(cvSize(width, height), IPL_DEPTH_32F, src->nChannels);
+  input = cvCreateImage(cvSize(width, height), IPL_DEPTH_32F, src->nChannels);
   cvConvertScale(src, input,1.0/255);
 
   printf("processing\n");
-  int num_ccs; 
-  IplImage *seg = segment_image(input, sigma, k, min_size, &num_ccs);
+  //int num_ccs; 
+  segment_image(min_size);
   
   //show result
-  cvShowImage("input", input);
+  cvShowImage("Seg", output);
   cvWaitKey(5);
-  cvShowImage("Seg", seg);
-  cvWaitKey(5);
-  cvSaveImage("Img\\result.jpg", seg);
+  cvSaveImage("Img\\result.jpg", output);
+
+  cvNamedWindow("Seg");
+  cvCreateTrackbar("k", "Seg", &k, 2000, segment_image);
+  cvCreateTrackbar("min_size", "Seg", &min_size,1000, segment_image);
+  cvCreateTrackbar("sigma*0.01", "Seg", &sigmaInt, 100, segment_image);
 
   printf("got %d components\n", num_ccs);
   printf("done! uff...thats hard work.\n");
