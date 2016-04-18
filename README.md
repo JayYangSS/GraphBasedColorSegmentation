@@ -1,5 +1,4 @@
-The original readme:
-
+## The original readme:
 
 Implementation of the segmentation algorithm described in:
 
@@ -10,9 +9,9 @@ International Journal of Computer Vision, 59(2) September 2004.
 The program takes a color image (PPM format) and produces a segmentation
 with a random color assigned to each region.
 
-1) Type "make" to compile "segment".
+1. Type "make" to compile "segment".
 
-2) Run "segment sigma k min input output".
+2. Run "segment sigma k min input output".
 
 The parameters are: (see the paper for details)
 
